@@ -1,4 +1,4 @@
-# Aterlier Observabilité, Supervision & Journalisation
+# Atelier Observabilité, Supervision & Journalisation
 
 ⚙️ Lancer le projet :\
 <br />
@@ -8,3 +8,6 @@ Afficher la liste des films : http://localhost:3002/api/movies \
 Accéder aux métriques : http://localhost:3002/metrics \
 Grafana : http://localhost:3000 (utiliser les identifiants admin / admin). \
 Prometheus : http://localhost:9090
+<br />
+<br />
+👉 Contributeurs : Nicolas Lépinay et Injin Kim.
