@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  movies-api:
+    build: ./webservice_films_api
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./webservice_films_api/src/.env
+    environment:
+      - NODE_ENV=production
+      - AUTH_API_URL=http://auth-api
+      - FILM_API_URL=http://movies-api
+      - RESERVATION_API_URL=http://reservations-api
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+      
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+      - loki
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki/local-config.yaml:/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    depends_on:
+      - loki
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200"
+    command: -config.file=/etc/tempo/tempo-config.yaml
+    volumes:
+      - ./tempo/tempo-config.yaml:/etc/tempo/tempo-config.yaml

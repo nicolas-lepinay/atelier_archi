@@ -1,0 +1,33 @@
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 0
+
+distributor:
+  receivers:
+    jaeger:
+      protocols:
+        grpc:
+        thrift_binary:
+        thrift_compact:
+        thrift_http:
+    zipkin:
+      endpoint: /api/v2/spans
+    otlp:
+      protocols:
+        grpc:
+        http:
+    prometheus:
+      remote_write:
+        - endpoint: /api/prom/push
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+
+storage:
+  trace:
+    backend: local
+    config:
+      path: /tmp/tempo/traces
